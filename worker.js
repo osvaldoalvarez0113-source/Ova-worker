@@ -6,7 +6,6 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "POST",
           "Access-Control-Allow-Headers": "*",
-
         },
       });
     }
@@ -19,29 +18,25 @@ export default {
     const prompt = body.prompt || "";
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent`,
-
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + env.GEMINI_API_KEY,
+        },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 1024 }
+          model: "gemini-3.1-flash-lite",
+          messages: [{ role: "user", content: prompt }],
         }),
-
-          
-        
       }
     );
 
     const data = await geminiRes.json();
-    const texto = data?.candidates?.[0]?.content?.parts?.[0]?.text
-      || ("Sin texto. Razón: " + (data?.candidates?.[0]?.finishReason || JSON.stringify(data).slice(0,200)));
-
+    const texto = data?.choices?.[0]?.message?.content
+      || ("Sin texto. Razón: " + JSON.stringify(data).slice(0, 300));
 
     return new Response(JSON.stringify({ content: [{ type: "text", text: texto }] }), {
-
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
