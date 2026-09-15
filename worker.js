@@ -38,7 +38,8 @@ export default {
       || ("Sin texto. Razón: " + (data?.candidates?.[0]?.finishReason || JSON.stringify(data).slice(0,200)));
 
 
-    return new Response(JSON.stringify({ texto }), {
+    return new Response(JSON.stringify({ content: [{ type: "text", text: texto }] }), {
+
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
