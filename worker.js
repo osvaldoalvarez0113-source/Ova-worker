@@ -25,12 +25,18 @@ export default {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 1024 }
         }),
+
+          
+        
       }
     );
 
     const data = await geminiRes.json();
-    const texto = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
+    const texto = data?.candidates?.[0]?.content?.parts?.[0]?.text
+      || ("Sin texto. Razón: " + (data?.candidates?.[0]?.finishReason || JSON.stringify(data).slice(0,200)));
+
 
     return new Response(JSON.stringify({ texto }), {
       headers: {
